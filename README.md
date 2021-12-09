@@ -115,6 +115,12 @@ gmx sasa -f md_noPBC.xtc -s md.tpr -n n.ndx -o sasa.xvg -or sasa_perresidue.xvg 
 
 OBS.: Lembrar de criar um arquivo index caso seja preciso selecionar resíduos específicos
 
+## HBonds
+
+```
+gmx hbond -f md_noPBC.xtc -s md.tpr -tu ns
+```
+
 ## Editar aquivos .xvg
 
 Esta série de comandos ira converter o arquivo `.xvg` gerado pelo GROMACS em arquivos `.txt` que pode ser utilizado para fazer graficos em R ou Python.
@@ -122,42 +128,42 @@ Esta série de comandos ira converter o arquivo `.xvg` gerado pelo GROMACS em ar
 * Raio de Giro:
 
 ```
-cat gyrate.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > gyrate.txt && sed -i 's/@TYPE xy/time rg x y z/' gyrate.txt
+cat gyrate.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > gyrate.txt && sed -i 's/@TYPE xy/time rg rx ry rz/' gyrate.txt
 ```
 
 * SASA:
 
 ```
-cat sasa.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa.txt && sed -i 's/@TYPE xy/x y/' sasa.txt
+cat sasa.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa.txt && sed -i 's/@TYPE xy/time value/' sasa.txt
 ```
 
 
 * SASA por resíduo:
 
 ```
-cat sasa_perresidue.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa_perresidue.txt && sed -i 's/@TYPE xy/x y z/' sasa_perresidue.txt
+cat sasa_perresidue.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa_perresidue.txt && sed -i 's/@TYPE xy/time avg sd/' sasa_perresidue.txt
 ```
 
 * RMSD:
 
 ```
-cat rmsd.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsd.txt && sed -i 's/@TYPE xy/x y/' rmsd.txt
+cat rmsd.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsd.txt && sed -i 's/@TYPE xy/time value/' rmsd.txt
 ``` 
 
 * RMSF:
 
 ``` 
-cat rmsf.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsf.txt && sed -i 's/@TYPE xy/x y/' rmsf.txt
+cat rmsf.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsf.txt && sed -i 's/@TYPE xy/time value/' rmsf.txt
 ```
 
 * Pairdist:
 
 ```
-cat pairdist.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > pairdist.txt && sed -i 's/@TYPE xy/x y/' pairdist.txt 
+cat pairdist.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > pairdist.txt && sed -i 's/@TYPE xy/time value/' pairdist.txt 
 ```
 
 * HBonds:
 
 ```
-cat hbnum.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > hbnum.txt && sed -i 's/@TYPE xy/x y z/' hbnum.txt 
+cat hbnum.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > hbnum.txt && sed -i 's/@TYPE xy/time total belowcutoff/' hbnum.txt 
 ```
