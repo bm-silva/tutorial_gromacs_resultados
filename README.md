@@ -122,6 +122,10 @@ OBS.: Selecione Backbone (4) e Protein (1) para utilizar os átomos principais c
 
 ## Para criar index customizáveis
 
+Adaptado do [Manual](https://manual.gromacs.org/archive/5.0.2/programs/gmx-make_ndx.html):
+
+>Os grupos de índice são necessários para quase todos os programas GROMACS. Todos esses programas podem gerar grupos de índice padrão. Você SÓ precisa usar `gmx make_ndx` quando precisar de grupos de índice ESPECIAIS. Há um grupo de índice padrão para todo o sistema, 9 grupos de índice padrão para proteínas e um grupo de índice padrão é gerado para cada outro nome de resíduo. Quando nenhum arquivo de índice é fornecido, o `gmx make_ndx` irá gerar os grupos padrão. Com o editor de índice, você pode selecionar nomes e números de átomos, resíduos e cadeias. Quando um arquivo de entrada de execução é fornecido, você também pode selecionar o tipo de átomo. Você pode usar NOT, AND e OR, você pode dividir grupos em cadeias, resíduos ou átomos. Você pode excluir e renomear grupos.
+
 ```
 gmx make_ndx -f md.tpr -o n.ndx
 ```
