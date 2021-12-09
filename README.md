@@ -2,6 +2,28 @@
 
 ## Após termino da dinâmica:
 
+Texto adaptado do [Manual do GROMACS](https://www.gromacs.org/Documentation_of_outdated_versions/Terminology/Periodic_Boundary_Conditions)
+
+Condições de contorno periódicas (do inglês, *Periodic Boundary Condition*, ou PBC) são utilizadas em simulações de dinâmica molecular para evitar problemas com efeitos de contorno causados por tamanho finito e tornar o sistema mais infinito, às custas de possíveis efeitos de periodicidade.
+Iniciantes visualizando uma trajetória às vezes pensam que estão observando um problema quando:
+1. A(s) molécula(s) não ficam no centro da caixa;
+2. Parece que partes da molécula(s) se difundem fora da caixa;
+3. Buracos são criados;
+4. Moléculas quebradas aparecem;
+5. Sua caixa de simulação era um dodecaedro rômbico ou octaedro cúbico, mas parece um cubo inclinado após a simulação;
+6. Ligações malucas em toda a célula de simulação aparecem.
+
+Este não é um problema ou erro que está ocorrendo, é o que você deve esperar.
+A existência de PBC significa que qualquer átomo que sai de uma caixa de simulação, digamos, pela face direita, entra na caixa de simulação pela face esquerda. No exemplo de uma proteína grande, se você olhar para a face da caixa de simulação que é oposta àquela de onde a proteína está saindo, então um buraco no solvente será visível. A razão pela qual as moléculas se movem de onde estavam inicialmente localizadas dentro da caixa é (para a grande maioria das simulações) que elas podem se difundir livremente. E é o que eles fazem, eles não são mantidos em um local mágico da caixa.
+
+Um exemplo animado está a baixo. Perceba que a caixa do meio pode ser considerada a principal, enquanto "cópias" desta caixa são colocadas em volta.
+
+<p align="center">
+  <img src="https://i.makeagif.com/media/11-11-2017/f9YXHQ.gif" alt="animated" />
+</p>
+
+Para retirar as condições de contorno periódicas, utilize o comando:
+
 ```
 gmx trjconv -s md.tpr -f md.xtc -o md_noPBC.xtc -pbc mol -ur compact 
 ```
@@ -49,6 +71,8 @@ gmx convert-tpr -s md.tpr -extend 50000 -o md_150.tpr
 ```
 * Estender o tempo de simulação por 50ns. Perceba que o tempo está em ps (50000)
 
+GROMACS utiliza o arquivo `md.cpt` para conter todas as informações necessárias para continuar a simulação:
+
 1. Caso a sua dinâmica tenha parado antes do tempo, você pode reinicia-la digitando:
 ```
 gmx mdrun -s md.tpr -cpi md.cpt -v -deffnm md 
@@ -64,6 +88,8 @@ gmx mdrun -s md_150.tpr -cpi md.cpt -v -append -deffnm md
 
 ## Para juntar arquivos de trajetoria:
 
+Caso tenha optado por separar os arquivos da dinâmica, você pode junta-los utilizando:
+
 ```
 gmx trjcat -f md_1.xtc md_2.xtc -o trajectory.xtc
 ```
@@ -73,12 +99,24 @@ gmx trjcat -f md_1.trr md_2.trr -o trajectory.trr
 
 ## Utilizar Algoritmos de clusterização de estruturas:
 
+O GROMACS possui uma ferramenta para poder agrupar estruturas utilizando diferentes métodos. As informações abaixo foram retiradas do [Manual](https://manual.gromacs.org/documentation/2021/onlinehelp/gmx-cluster.html)
+
+* `linkage`: adiciona uma estrutura a um cluster quando sua distância a qualquer elemento do cluster for menor que um valor de corte.
+
+* `jarvis-patrick`: adiciona uma estrutura a um cluster quando esta estrutura é vizinha a outra estrutura no cluster tiverem pelo menos P vizinhos em comum. Os vizinhos de uma estrutura são as M estruturas mais próximas ou todas as estruturas dentro de um valor de corte.
+
+* `monte-carlo`: o algoritmo reordena a matriz de RMSD de forma que a ordem dos quadros use os menores incrementos possíveis. Com isso, é possível fazer uma animação suave indo de uma estrutura para outra com o maior RMSD possível (por exemplo) entre elas, porém as etapas intermediárias devem ser as menores possíveis. As aplicações podem ser para visualizar um potencial de conjunto de força média de simulações ou uma simulação de tração. Obviamente, o usuário deve preparar bem a trajetória (por exemplo, não sobrepondo quadros). O resultado final pode ser inspecionado visualmente olhando para o arquivo `.xpm` da matriz, que deve variar suavemente de baixo para cima.
+
+* `diagonalization`: utiliza a diagonal da matriz de RMSD.
+
+* `gromos`: usa um algoritmo descrito em Daura et al. (Angew. Chem. Int. Ed. 1999, 38, pp 236-240). Conta o número de vizinhos utilizando um valor de corte, pega a estrutura com maior número de vizinhos com todos os seus vizinhos como um cluster e a retira do `pool` de clusters. O algoritmo repete esta etapa para todas as estruturas restantes.
+
 Arquivos necessários: `md_150.tpr`, `md.tpr`, `md.trr`, `md_noPBC.xtc`, `topol.top`
 
-* Para fazer a clusterização:
+Para fazer a clusterização:
 
 ```
-gmx cluster -f md.trr -s md.tpr -cutoff 0.1 -dist -sz -ntr -clid -wcl 0 -method linkage (usa backbone e protein)
+gmx cluster -f md.trr -s md.tpr -cutoff 0.1 -dist -sz -ntr -clid -wcl 0 -method linkage
 ```
 OBS.: Selecione Backbone (4) e Protein (1) para utilizar os átomos principais como entrada para os cálculos e o programa retornar arquivos `.pdb` com todos os átomos.
 
@@ -90,7 +128,9 @@ gmx make_ndx -f md.tpr -o n.ndx
 
 OBS.: Você pode combinar opções, como por exemplo, selecionar somente os átomos do *backbone* de resíduos específicos, digitando `r 59-171 & 4`.
 
-## Criar PDB com valores de B-Score:
+## Criar PDB com valores de B-Factor:
+
+É possível renderizar cores em uma proteína a partir dos valores de RMSF, o que permite identificação visual das regiões de alta flutuação. Isso é comumente feito configurando os valores do fator de temperatura (também conhecido como b-factor), o que pode ser visualizado utilizando programas como VMD ou o UCSF Chimera.
 
 ```
 gmx rmsf -s md.tpr -f md_noPBC.xtc -oq rmsf.pdb -res
