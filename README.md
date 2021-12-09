@@ -107,8 +107,57 @@ gmx xpm2ps -f dssp.xpm -o dssp.eps -di in.m2p
 
 * Para alterar os parametros do gráfico, editar os arquivos `.xpm` e `.m2p`.
 
-Para realizar análise de SASA:
+## Solvent-Accessible Surface Area (SASA):
 	
-	gmx sasa -f md_noPBC.xtc -s md.tpr -n n.ndx -o sasa.xvg -or sasa_perresidue.xvg -tu ns -pbc yes
+```
+gmx sasa -f md_noPBC.xtc -s md.tpr -n n.ndx -o sasa.xvg -or sasa_perresidue.xvg -tu ns -pbc yes
+```
 
-	-Lembrar de criar um arquivo index caso seja preciso selecionar resíduos específicos
+OBS.: Lembrar de criar um arquivo index caso seja preciso selecionar resíduos específicos
+
+## Editar aquivos .xvg
+
+Esta série de comandos ira converter o arquivo `.xvg` gerado pelo GROMACS em arquivos `.txt` que pode ser utilizado para fazer graficos em R ou Python.
+
+* Raio de Giro:
+
+```
+cat gyrate.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > gyrate.txt && sed -i 's/@TYPE xy/time rg x y z/' gyrate.txt
+```
+
+* SASA:
+
+```
+cat sasa.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa.txt && sed -i 's/@TYPE xy/x y/' sasa.txt
+```
+
+
+* SASA por resíduo:
+
+```
+cat sasa_perresidue.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > sasa_perresidue.txt && sed -i 's/@TYPE xy/x y z/' sasa_perresidue.txt
+```
+
+* RMSD:
+
+```
+cat rmsd.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsd.txt && sed -i 's/@TYPE xy/x y/' rmsd.txt
+``` 
+
+* RMSF:
+
+``` 
+cat rmsf.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > rmsf.txt && sed -i 's/@TYPE xy/x y/' rmsf.txt
+```
+
+* Pairdist:
+
+```
+cat pairdist.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > pairdist.txt && sed -i 's/@TYPE xy/x y/' pairdist.txt 
+```
+
+* HBonds:
+
+```
+cat hbnum.xvg | awk '{if ($1 != "@" && $1 != "#") print}' > hbnum.txt && sed -i 's/@TYPE xy/x y z/' hbnum.txt 
+```
