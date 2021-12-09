@@ -79,22 +79,33 @@ OBS.: Selecione Backbone (4) e Protein (1) para utilizar os átomos principais c
 gmx make_ndx -f md.tpr -o n.ndx
 ```
 
-OBS.:Você pode combinar opções, como por exemplo, selecionar somente os átomos do **backbone** de resíduos específicos, digitando `r 59-171 & 4`.
+OBS.: Você pode combinar opções, como por exemplo, selecionar somente os átomos do *backbone* de resíduos específicos, digitando `r 59-171 & 4`.
 
-Criar PDB com B-Score usando o index:
+## Criar PDB com valores de B-Score:
 
-	gmx rmsf -s md.tpr -f md_noPBC.xtc -oq rmsf.pdb -res -n n.ndx (seleciona o index escolhido)
+```
+gmx rmsf -s md.tpr -f md_noPBC.xtc -oq rmsf.pdb -res
+```
 
-Para medir a distancia entre 2 residuos, ou 2 index:
+## Para medir a distancia entre 2 grupos:
 
-	gmx pairdist -f trajectory_500_noPBC.xtc -s md_500.tpr -n n2.ndx -o teste_rmsd_sidechain.xvg -tu ns
+```
+gmx pairdist -f md_noPBC.xtc -s md.tpr -o paidist.xvg -tu ns
+```
 
-Para utilizar o DSSP:
-	-Primeiramente colocar o arquivo dentro de /usr/local/bin
-	-Transformar em executável
-	
-	gmx do_dssp -f trajetória -s *.tpr -o dssp.xpm -tu ns -sc scount.xvg -sss HE
-	gmx xpm2ps -f dssp.xpm -o dssp.eps -di in.m2p (Para alterar os parametros do grafico editar os arquivos .xpm e .m2p)
+## DSSP:
+
+Primeiramente é necessário colocar o arquivo `dssp` dentro de **/usr/local/bin** e em seguida transformar em executável: `chmod +x /usr/local/bin/dssp`
+
+```
+gmx do_dssp -f trajetória -s *.tpr -o dssp.xpm -tu ns -sc scount.xvg -sss HE
+```
+
+```
+gmx xpm2ps -f dssp.xpm -o dssp.eps -di in.m2p 
+```
+
+* Para alterar os parametros do gráfico, editar os arquivos `.xpm` e `.m2p`.
 
 Para realizar análise de SASA:
 	
