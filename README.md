@@ -1,46 +1,85 @@
 # Comandos para extrair resultados de uma simulação utilizando o programa GROMACS
 
-Após termino da dinâmica:
+## Após termino da dinâmica:
 
-	gmx trjconv -s md.tpr -f md.xtc -o md_noPBC.xtc -pbc mol -ur compact (selecionar System)
+```
+gmx trjconv -s md.tpr -f md.xtc -o md_noPBC.xtc -pbc mol -ur compact 
+```
+* Selecionar System (0)
 
-	-pbc nojump para mais de uma chain
-
-	gmx trjconv -f md_noPBC.xtc -s md.tpr -o md_noPBCfit.xtc -fit rot+trans (selecionar 1 e 1:usar para fazer análises envolvendo somente a proteína)
+OBS.: Caso esteja utilizanod mais de uma estrutura no seu sistema, considere utilizar `nojump` como argumento na **flag** `-pbc`
 
 
-RMSD: gmx rms -s md.tpr -f md_noPBC.xtc -o rmsd.xvg -tu ns (Backbone e Backbone)
+## Root-Mean-Square Deviation (RMSD)
 
-Gyrate: gmx gyrate -s md.tpr -f md_noPBC.xtc -o gyrate.xvg (Protein)
+```
+gmx rms -s md.tpr -f md_noPBC.xtc -o rmsd.xvg -tu ns
+```
+* Selecionar Backbone (4) e Backbone (4) ou um index desejado.
 
-RMSF: gmx rmsf -s md.tpr -f md_noPBC.xtc -o rmsf.xvg -res (Backbone)
+## Raio de Giro
 
-Para recomeçar a dinâmica
+```
+gmx gyrate -s md.tpr -f md_noPBC.xtc -o gyrate.xvg
+```
 
-	gmx convert-tpr -s md.tpr -extend 50000 -o md_150.tpr (extende por 50ns, tempo em ps)
+* Selecionar Protein (1) ou um index desejado.
 
-	gmx mdrun -v -deffnm md_150 -cpi md.cpt -noappend (para fazer em arquivos separados)
+## Root-Mean-Square Fluctuation (RMSF)
 
-	gmx mdrun -s md_150.tpr -cpi md.cpt -v -append -deffnm md (para fazer tudo junto)
+```
+gmx rmsf -s md.tpr -f md_noPBC.xtc -o rmsf.xvg -res (Backbone)
+```
+* Selecionar Backbone (4) ou um index desejado.
 
-Para juntar arquivos de trajetoria:
+## Para recomeçar a dinâmica
 
-	gmx trjcat -f md_1.xtc md_2.xtc -o trajectory.xtc
 
-	gmx trjcat -f md_1.trr md_2.trr -o trajectory.trr
+```
+gmx convert-tpr -s md.tpr -extend 50000 -o md_150.tpr 
+```
+* Estender o tempo de simulação por 50ns. Perceba que o tempo está em ps (50000)
 
-Arquivos para cluster:
+1. Caso a sua dinâmica tenha parado antes do tempo, você pode reinicia-la digitando:
+```
+gmx mdrun -s md.tpr -cpi md.cpt -v -deffnm md 
+```
+2. Para recomeçar a dinâmica e salvar todos os novos arquivos em arquivos separados:
+```
+gmx mdrun -s md_150.tpr -cpi md.cpt -noappend -v -deffnm md_150 
+```
+3.  Para recomeçar a dinâmica e salvar todos os novos arquivos dentro dos arquivos ja existentes:
+```
+gmx mdrun -s md_150.tpr -cpi md.cpt -v -append -deffnm md 
+```
 
-	md_150.tpr, md.tpr, trajectory.trr, trajectory.xtc, topol.top
+## Para juntar arquivos de trajetoria:
 
-Para fazer cluster:
+```
+gmx trjcat -f md_1.xtc md_2.xtc -o trajectory.xtc
+```
+```
+gmx trjcat -f md_1.trr md_2.trr -o trajectory.trr
+```
 
-	gmx cluster -f md_150.part0002.trr -s md_150.tpr -b 100000 -e 140000 -cutoff 0.1 -dist -sz -ntr -clid -wcl 0 -method linkage (usa backbone e protein)
+## Utilizar Algoritmos de clusterização de estruturas:
 
-Para criar o index e selecionar o rmsf de aminoácidos específicos
+Arquivos necessários: `md_150.tpr`, `md.tpr`, `md.trr`, `md_noPBC.xtc`, `topol.top`
 
-	gmx make_ndx -f md_150.tpr -o n.ndx (r resInicial-resFinal)
-	gmx make_ndx -f md.tpr -o n.dx (r 59-171 & 4) para selecionar somente backbone
+* Para fazer a clusterização:
+
+```
+gmx cluster -f md.trr -s md.tpr -cutoff 0.1 -dist -sz -ntr -clid -wcl 0 -method linkage (usa backbone e protein)
+```
+OBS.: Selecione Backbone (4) e Protein (1) para utilizar os átomos principais como entrada para os cálculos e o programa retornar arquivos `.pdb` com todos os átomos.
+
+## Para criar index customizáveis
+
+```
+gmx make_ndx -f md.tpr -o n.ndx
+```
+
+OBS.:Você pode combinar opções, como por exemplo, selecionar somente os átomos do **backbone** de resíduos específicos, digitando `r 59-171 & 4`.
 
 Criar PDB com B-Score usando o index:
 
