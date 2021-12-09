@@ -12,12 +12,20 @@ OBS.: Caso esteja utilizanod mais de uma estrutura no seu sistema, considere uti
 
 ## Root-Mean-Square Deviation (RMSD)
 
+Texto retirado do [Portal BIOINFO](https://bioinfo.com.br/dinamica-molecular-como-mostrar-um-filme-completo-em-uma-folha-de-papel/):
+
+>Ao avaliar um sistema que está em movimento, você precisa de um gráfico que represente sua mobilidade. Uma forma de fazer isso é utilizar o desvio quadrático-médio das distâncias dos átomos (ou do inglês *Root-Mean-Aquare Deviation* ou somente RMSD). Nesse tipo de gráfico é feita uma comparação frame a frame da variação das distâncias. Quando o gráfico alcança o platô, ou seja, não tiver mais tantas variações, pode-se dizer que o sistema entrou em equilíbrio, indicando que a proteína, por exemplo, não apresenta mais tantas modificações estruturais.
+
 ```
 gmx rms -s md.tpr -f md_noPBC.xtc -o rmsd.xvg -tu ns
 ```
 * Selecionar Backbone (4) e Backbone (4) ou um index desejado.
 
 ## Raio de Giro
+
+Texto retirado do [Portal BIOINFO](https://bioinfo.com.br/dinamica-molecular-como-mostrar-um-filme-completo-em-uma-folha-de-papel/):
+
+>Bastante usado para estudo de enovelamento de peptídeos e proteínas. O raio de giro está relacionado ao deslocamento do centro de massa da proteína em relação a um eixo. Simplificando, quanto mais volumosa uma proteína, maior o seu raio de giro. Nesse caso, podemos dizer que quando uma proteína está desestruturando, o seu raio de gira aumenta.
 
 ```
 gmx gyrate -s md.tpr -f md_noPBC.xtc -o gyrate.xvg
@@ -27,13 +35,14 @@ gmx gyrate -s md.tpr -f md_noPBC.xtc -o gyrate.xvg
 
 ## Root-Mean-Square Fluctuation (RMSF)
 
+A flutuação quadrática média (*do ingês, Root-Mean-Square Fluctuation*, ou RMSF) de uma estrutura é a média de tempo do RMSD. O RMSD quantifica o quanto uma estrutura diverge de uma referência ao longo do tempo, o RMSF revela quais áreas do sistema são mais móveis.
+
 ```
 gmx rmsf -s md.tpr -f md_noPBC.xtc -o rmsf.xvg -res (Backbone)
 ```
 * Selecionar Backbone (4) ou um index desejado.
 
 ## Para recomeçar a dinâmica
-
 
 ```
 gmx convert-tpr -s md.tpr -extend 50000 -o md_150.tpr 
