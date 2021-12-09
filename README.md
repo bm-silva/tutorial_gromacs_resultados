@@ -148,7 +148,9 @@ gmx pairdist -f md_noPBC.xtc -s md.tpr -o paidist.xvg -tu ns
 
 ## DSSP:
 
-Primeiramente é necessário colocar o arquivo `dssp` dentro de **/usr/local/bin** e em seguida transformar em executável: `chmod +x /usr/local/bin/dssp`
+Estre programa lê um arquivo de trajetória e calcula a estrutura secundária para cada período de chamada do programa `DSSP`. Se você não tiver o programa `DSSP`, acesse <https://swift.cmbi.umcn.nl/gv/dssp/> ou utilize o disponível neste repositório.
+
+Primeiramente é necessário colocar o arquivo `dssp` dentro de **/usr/local/bin** (ou em alguma pasta no seu $PATH) e em seguida transformar em executável: `chmod +x /usr/local/bin/dssp`
 
 ```
 gmx do_dssp -f trajetória -s *.tpr -o dssp.xpm -tu ns -sc scount.xvg -sss HE
@@ -161,7 +163,9 @@ gmx xpm2ps -f dssp.xpm -o dssp.eps -di in.m2p
 * Para alterar os parametros do gráfico, editar os arquivos `.xpm` e `.m2p`.
 
 ## Solvent-Accessible Surface Area (SASA):
-	
+
+O `gmx sasa` calcula as áreas acessível pelo solvente utilizando o algoritmo de Eisenhaber F, Lijnzaad P, Argos P, Sander C, & Scharf M (1995) J. Comput. Chem. 16, 273-284
+
 ```
 gmx sasa -f md_noPBC.xtc -s md.tpr -n n.ndx -o sasa.xvg -or sasa_perresidue.xvg -tu ns -pbc yes
 ```
@@ -169,6 +173,8 @@ gmx sasa -f md_noPBC.xtc -s md.tpr -n n.ndx -o sasa.xvg -or sasa_perresidue.xvg 
 OBS.: Lembrar de criar um arquivo index caso seja preciso selecionar resíduos específicos
 
 ## HBonds
+
+`gmx hbond` calcula e analisa ligações de hidrogênio. As ligações de hidrogênio são determinadas com base nos pontos de corte para o ângulo `Hidrogênio - Doador - Receptor`  e a distância `Doador - Receptor` (ou Hidrogênio - Receptor usando `-noda`). Os grupos `OH` e `NH` são considerados **doadores**, `O` é sempre um **receptor**, N é um **receptor** por padrão.
 
 ```
 gmx hbond -f md_noPBC.xtc -s md.tpr -tu ns
