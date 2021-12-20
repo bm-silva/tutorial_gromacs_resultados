@@ -140,6 +140,8 @@ OBS.: Você pode combinar opções, como por exemplo, selecionar somente os áto
 gmx rmsf -s md.tpr -f md_noPBC.xtc -oq rmsf.pdb -res
 ```
 
+* Selecionar Backbone (4), caso deseje somente os átomos principais ou Protein (1) para poder ter todos os átomos e estruturas secundárias.
+
 ## Para medir a distancia entre 2 grupos:
 
 ```
