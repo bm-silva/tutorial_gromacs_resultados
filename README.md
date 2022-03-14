@@ -29,7 +29,7 @@ gmx trjconv -s md.tpr -f md.xtc -o md_noPBC.xtc -pbc mol -ur compact
 ```
 * Selecionar System (0)
 
-OBS.: Caso esteja utilizanod mais de uma estrutura no seu sistema, considere utilizar `nojump` como argumento na **flag** `-pbc`
+OBS.: Caso esteja utilizando mais de uma estrutura no seu sistema, considere utilizar `nojump` como argumento na **flag** `-pbc`
 
 
 ## Root-Mean-Square Deviation (RMSD)
